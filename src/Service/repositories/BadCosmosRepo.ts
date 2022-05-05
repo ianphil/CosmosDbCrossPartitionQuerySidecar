@@ -1,18 +1,18 @@
 import { Container, CosmosClient, FeedResponse } from '@azure/cosmos'
-import { Address } from './Address';
+import { Address } from '../models/Address';
 
-export class CosmosRepo {
+export class BadCosmosRepo {
     private _container: Container;
 
     constructor(container: Container) {
         this._container = container;
     }
     
-    public static async factory() : Promise<CosmosRepo> {
+    public static async factory() : Promise<BadCosmosRepo> {
         let cosmosClient = new CosmosClient(process.env.CONN_STRING!);
         let db = await cosmosClient.databases.createIfNotExists({ id: process.env.DB_NAME! });
         let cont = await db.database.containers.createIfNotExists({ id: process.env.COLL_NAME! });
-        return new CosmosRepo(cont.container);
+        return new BadCosmosRepo(cont.container);
     }
 
     public async getById(id: string) : Promise<Address> {

@@ -1,12 +1,12 @@
 import { Address } from "./models/Address";
-import {CosmosRepo} from "./models/CosmosRepo";
+import {BadCosmosRepo} from "./repositories/BadCosmosRepo";
 import * as dotenv from 'dotenv'
 import assert from "assert";
 
 dotenv.config()
 
 let run = async () => {
-    let repo = await CosmosRepo.factory();
+    let repo = await BadCosmosRepo.factory();
 
     let addresses: Address[] = [
         { id: "1", street: "1 Microsoft Way", city: "Redmond", state: "WA", zipCode: "98052" },

@@ -2,7 +2,7 @@
   "name": "service",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "npm run clean && npm run build && node dist/index.js",
