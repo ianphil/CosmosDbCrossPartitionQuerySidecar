@@ -2,10 +2,10 @@
   "name": "service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js",
+    "start": "npm run clean && npm run build && node dist/index.js",
     "dev": "npm install",
     "prod": "npm install --production",
     "rimraf": "./node_modules/rimraf/bin.js",
@@ -15,6 +15,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@azure/cosmos": "^3.15.1",
+    "dotenv": "^16.0.0",
     "fastify": "^3.29.0"
   },
   "devDependencies": {

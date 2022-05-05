@@ -1,9 +1,15 @@
 import fastify from 'fastify'
+import { Greeter } from './models/Greeter'
+import * as dotenv from 'dotenv'
 
+dotenv.config()
 const server = fastify()
 
+// process.env.CONN_STRING
+
 server.get('/ping', async (request, reply) => {
-    return 'pong\n'
+    let greeter = new Greeter()
+    return greeter.greet()
 })
 
 server.listen(8080, '0.0.0.0', (err, address) => {
