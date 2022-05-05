@@ -1,34 +1,29 @@
-import { City } from "./models/City";
+import { Address } from "./models/Address";
 import {CosmosRepo} from "./models/CosmosRepo";
 import * as dotenv from 'dotenv'
-import { Console } from "console";
+import assert from "assert";
 
 dotenv.config()
 
 let run = async () => {
     let repo = await CosmosRepo.factory();
 
-    let cities: City[] = [
-        { id: "1", name: "Flowery Branch", state: "GA", isCapitol: false },
-        { id: "2", name: "Duluth", state: "GA", isCapitol: false },
-        { id: "3", name: "Buford", state: "GA", isCapitol: false },
-        { id: "4", name: "Atlanta", state: "GA", isCapitol: true },
-        { id: "5", name: "Seattle", state: "WA", isCapitol: true },
-        { id: "6", name: "Bellevue", state: "WA", isCapitol: false }
-    ]
+    let addresses: Address[] = [
+        { id: "1", street: "1 Microsoft Way", city: "Redmond", state: "WA", zipCode: "98052" },
+        { id: "2", street: "2 Microsoft Way", city: "Redmond", state: "WA", zipCode: "98052" },
+        { id: "3", street: "555 110th Ave NE", city: "Bellevue", state: "WA", zipCode: "98004" }
+    ];
     
-    // cities.forEach(city => {
-    //     repo.upsert(city);
-    //     console.log(`Created city: ${city.name}`);
-    // });
-
-    let seattle: City = await repo.get("1");
-    console.log(`GetById: ${seattle.name}`);
-
-    let cityList: City[] = await repo.getAll();
-    cityList.forEach(city => {
-        console.log(`Retrieved city: ${city.name}`)
+    addresses.forEach(address => {
+        repo.upsert(address);
+        console.log(`Created city: ${address.street}`);
     });
+
+    let msftRedmondAddresses = await repo.queryByZip("98052");
+    assert.equal(msftRedmondAddresses.length, 2);
+
+    let msftInWashington = await repo.queryByState("WA");
+    assert.equal(msftInWashington.length, 3, `Cross Partition QueryByState returned: ${msftInWashington.length} not 3`);
 }
 
 run();

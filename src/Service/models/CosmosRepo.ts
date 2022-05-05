@@ -1,5 +1,5 @@
-import { Container, CosmosClient, PartitionKey } from '@azure/cosmos'
-import { City } from './City';
+import { Container, CosmosClient, FeedResponse } from '@azure/cosmos'
+import { Address } from './Address';
 
 export class CosmosRepo {
     private _container: Container;
@@ -15,30 +15,41 @@ export class CosmosRepo {
         return new CosmosRepo(cont.container);
     }
 
-    public async get(id: string) : Promise<any> {
-        let q: string = `SELECT * FROM c`;
-        let c1 = await this._container.items.query(q, { partitionKey: "GA" }).fetchAll();
-        // return c.resources[0] as City;
+    public async getById(id: string) : Promise<Address> {
+        return await (await this._container.item(id).read<Address>()).resource as Address;
+    }
 
-        let c = await this._container.item("1", "GA").read<City>();
+    public async queryByZip(zipCode: string) : Promise<Address[]> {
+        let q: string = `SELECT * FROM c`; // All where clauses don't work here
+        // https://docs.microsoft.com/en-us/javascript/api/@azure/cosmos/feedoptions?view=azure-node-latest#@azure-cosmos-feedoptions-partitionkey
+        let c = await this._container.items.query(q, { partitionKey: zipCode }).fetchAll();
+
+        return c.resources as Address[];
+    }
+
+    public async queryByState(state: string) : Promise<Address[]> {
+        let q: string = `SELECT * FROM c WHERE c.state = ${state}`;
+        let c: FeedResponse<Address>;
         
-        if (c.statusCode === 200) {
-            return c.resource as City;
-        } else {
-            console.log(`Trouble getting id ${id} from cosmos.`)
+        try {
+            c = await this._container.items.query<Address>(q).fetchAll();
+        } catch (error) {
+            return [];
         }
+
+        return c.resources as Address[];
     }
 
-    public async getAll() : Promise<City[]> {
-        return await (await this._container.items.readAll<City>().fetchAll()).resources as City[];
+    public async getAll() : Promise<Address[]> {
+        return await (await this._container.items.readAll<Address>().fetchAll()).resources as Address[];
     }
 
-    public async upsert(item: City) : Promise<City> {
-        return await (await this._container.items.upsert<City>(item)).resource as City;
+    public async upsert(item: Address) : Promise<Address> {
+        return await (await this._container.items.upsert<Address>(item)).resource as Address;
     }
 
-    public async delete(item: City) : Promise<boolean> {
-        let resp = await this._container.item(item.id).delete<City>();
+    public async delete(item: Address) : Promise<boolean> {
+        let resp = await this._container.item(item.id, item.state).delete<Address>();
 
         if (resp.statusCode == 200) {
             return true;
