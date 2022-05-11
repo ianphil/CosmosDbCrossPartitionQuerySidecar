@@ -12,7 +12,7 @@ export class CosmosService implements IDatabaseService {
     }
 
     async upsert(address: Address): Promise<Address> {
-        await this.init();
+        await this.init(); 
         return (await this._container!.items.upsert<Address>(address)).resource as Address;
     }
 
@@ -28,6 +28,7 @@ export class CosmosService implements IDatabaseService {
         return (await this._container!.items.query<Address>(q).fetchAll()).resources as Address[];
     }
 
+    // Probably move this into a factory and encapsulate logic in repo factory, inject _container into constructor
     private async init() {
         if (this._db == undefined) {
             this._db = (await this._cosmosClient.databases.createIfNotExists({ id: process.env.DB_NAME! })).database;
