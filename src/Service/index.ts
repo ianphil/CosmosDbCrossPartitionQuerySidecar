@@ -8,6 +8,9 @@ dotenv.config()
 const server = fastify()
 const repository: ICosmosRepository = cosmosRepositoryFactory();
 
+// This allows dev certs, really any cert so don't use out side of dev!
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 server.post('/upsert', async (request, reply) => {
     const addresses = request.body as Address[];
     addresses.forEach(address => {
@@ -19,14 +22,14 @@ server.post('/upsert', async (request, reply) => {
 
 server.get('/queryByZip', async (request, reply) => {
     const zip = (request.body as Address).zipCode;
-    const addresses = repository.queryByZip(zip);
+    const addresses = await repository.queryByZip(zip);
     
     reply.status(200).send(addresses);
 });
 
-server.get('/queryByState', async (request, reply) => {
+server.post('/queryByState', async (request, reply) => {
     const state = (request.body as Address).state;
-    const addresses = repository.queryByState(state);
+    const addresses = await repository.queryByState(state);
     
     reply.status(200).send(addresses);
 });

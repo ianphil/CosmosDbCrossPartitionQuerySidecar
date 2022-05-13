@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@azure/cosmos": "^3.15.1",
+    "axios": "^0.27.2",
     "dotenv": "^16.0.0",
     "fastify": "^3.29.0"
   },
