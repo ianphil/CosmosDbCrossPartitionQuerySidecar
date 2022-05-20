@@ -20,7 +20,7 @@ server.post('/upsert', async (request, reply) => {
     reply.status(200).send();
 });
 
-server.get('/queryByZip', async (request, reply) => {
+server.post('/queryByZip', async (request, reply) => {
     const zip = (request.body as Address).zipCode;
     const addresses = await repository.queryByZip(zip);
     
