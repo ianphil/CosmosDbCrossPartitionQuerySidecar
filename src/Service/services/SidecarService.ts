@@ -14,7 +14,7 @@ export class SidecarService implements IDatabaseService {
 
     async queryByZip(zipCode: string): Promise<Address[]> {
         try {
-            const {data, status} = await axios.get<Address[]>(`https://localhost:7138/api/Zip/${zipCode}`);
+            const {data, status} = await axios.get<Address[]>(`http://sidecar:7138/api/Zip/${zipCode}`);
             return data;
         } catch (error) {
             console.log(error);
@@ -24,7 +24,7 @@ export class SidecarService implements IDatabaseService {
     }
     async queryByState(state: string): Promise<Address[]> {
         try {
-            const {data, status} = await axios.get<Address[]>(`https://localhost:7138/api/State/${state}`);
+            const {data, status} = await axios.get<Address[]>(`http://sidecar:7138/api/State/${state}`);
             return data;
         } catch (error) {
             console.log(error);
