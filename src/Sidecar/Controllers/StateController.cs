@@ -7,6 +7,7 @@ using Sidecar.Services;
 
 namespace Sidecar.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class StateController : ControllerBase
@@ -22,7 +23,7 @@ namespace Sidecar.Controllers
         [HttpGet("{state}")]
         public async Task<string> Get(string state)
         {
-            var data = await _dataAccess.QueryByState(state);
+            var data = await _dataAccess.QueryByState(state, 1000, null);
             return JsonConvert.SerializeObject(data);
         }
     }

@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using Sidecar.Model;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Sidecar.Services;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Sidecar.Controllers
 {
-    public class QueryParametersGet
+    public class QueryParametersQuery
     {
         [BindRequired]
         public string connectionstring { get; set; }
+        [BindRequired]
+        public string sql { get; set; }
         public string? ctoken { get; set; }
         public int? limit { get; set; }
     }
@@ -19,7 +19,7 @@ namespace Sidecar.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class ZipController : ControllerBase
+    public class GenericController : Controller
     {
         #region Privates/Constants per discussion
         /// <summary>
@@ -38,63 +38,55 @@ namespace Sidecar.Controllers
         /// </summary>
         private static Dictionary<string, IDataAccess<Address>>? _access_map;
 
-        public ZipController(IDataAccess<Address> dataAccess)
+        public GenericController(IDataAccess<Address> dataAccess)
         {
             _dataAccess = dataAccess;
 
-            if (ZipController._access_map == null)
+            if (GenericController._access_map == null)
             {
-                ZipController._access_map = new Dictionary<string, IDataAccess<Address>>();
+                GenericController._access_map = new Dictionary<string, IDataAccess<Address>>();
             }
         }
 
-        // GET api/<ZipController1>/vi/30542
-        [HttpGet("{zipCode}/v1")]
-        public async Task<string> Get(string zipCode)
-        {
-            var data = await _dataAccess.QueryByZip(zipCode, 1000, null);
-            return JsonConvert.SerializeObject(data);
-        }
-
         // GET api/<ZipController1>/30542
-        [HttpGet("{zipCode}/v2")]
-        public async Task<string> Get(string zipCode, [FromQuery] QueryParametersGet parameters)
+        [HttpGet("v1")]
+        public async Task<string> Get([FromQuery] QueryParametersQuery parameters)
         {
 
             // If we don't have a IDataAccess instance for this connection string, 
             // create one. 
-            if ( !ZipController._access_map.ContainsKey(parameters.connectionstring) )
+            if (!GenericController._access_map.ContainsKey(parameters.connectionstring))
             {
-                ZipController._access_map.Add(
-                    parameters.connectionstring, 
+                GenericController._access_map.Add(
+                    parameters.connectionstring,
                     new Cosmos(
-                        parameters.connectionstring, 
-                        ZipController.DATABASE_ID, 
-                        ZipController.CONTAINER_ID)
+                        parameters.connectionstring,
+                        GenericController.DATABASE_ID,
+                        GenericController.CONTAINER_ID)
                     );
             }
 
             // Get the IDataAccess instance for this connection string
-            var access = ZipController._access_map[parameters.connectionstring];
+            var access = GenericController._access_map[parameters.connectionstring];
 
             // Clean up token which is likely just the returned string from the last
             // call and may contain errant \\ characters. 
-            if( parameters.ctoken != null)
+            if (parameters.ctoken != null)
             {
                 parameters.ctoken = parameters.ctoken.Replace("\\", "");
             }
 
-            int limit = ZipController.MAX_RETRIEVE;
-            if ( parameters.limit != null)
+            int limit = GenericController.MAX_RETRIEVE;
+            if (parameters.limit != null)
             {
                 limit = parameters.limit.Value;
             }
 
             // Finally, query with a max number to get and the optional incoming
             // continuation token from the last call. 
-            var data = await access.QueryByZip(
-                zipCode, 
-                ZipController.MAX_RETRIEVE, 
+            var data = await access.GenericQuerySql(
+                parameters.sql,
+                GenericController.MAX_RETRIEVE,
                 parameters.ctoken
                 );
 
