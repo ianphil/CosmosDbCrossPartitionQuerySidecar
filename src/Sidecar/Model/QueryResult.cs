@@ -2,7 +2,7 @@
 {
     public class QueryResult
     {
-        public string ContinuationToken { get; set; }
+        public string? ContinuationToken { get; set; }
         public List<Address> Results { get; set; }
 
         public QueryResult()
@@ -13,7 +13,7 @@
 
     public class GenericQueryResult
     {
-        public string ContinuationToken { get; set; }
+        public string? ContinuationToken { get; set; }
         public List<Dictionary<string,string>> Results { get; set; }
 
         public GenericQueryResult()

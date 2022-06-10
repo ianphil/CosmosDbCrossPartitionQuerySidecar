@@ -14,6 +14,10 @@ namespace Sidecar.Controllers
         public string connectionstring { get; set; }
         public string? ctoken { get; set; }
         public int? limit { get; set; }
+
+        public QueryParametersGet(){
+            this.connectionstring = String.Empty;
+        }
     }
 
 

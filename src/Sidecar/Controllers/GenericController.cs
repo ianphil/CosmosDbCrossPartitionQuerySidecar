@@ -14,6 +14,11 @@ namespace Sidecar.Controllers
         public string sql { get; set; }
         public string? ctoken { get; set; }
         public int? limit { get; set; }
+
+        public QueryParametersQuery(){
+            this.connectionstring = String.Empty;
+            this.sql = String.Empty;
+        }
     }
 
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Sidecar.Model;
+//using System.ComponentModel;
 
 namespace Sidecar.Services
 {
@@ -73,7 +74,7 @@ namespace Sidecar.Services
         ///     Return token must be valid. See Zip/Generic controller to ensure it 
         ///     has been appropriately cleaned before being sent in. 
         /// </returns>
-        private async Task<QueryResult> Query(string sqlQueryText, int max_query_count, string continuation_token)
+        private async Task<QueryResult> Query(string sqlQueryText, int max_query_count, string? continuation_token)
         {
             QueryDefinition queryDefinition = new QueryDefinition(sqlQueryText);
             QueryResult return_result = new QueryResult();
@@ -112,7 +113,7 @@ namespace Sidecar.Services
         ///     Return token must be valid. See Zip/Generic controller to ensure it 
         ///     has been appropriately cleaned before being sent in. 
         /// </returns>
-        private async Task<GenericQueryResult> GenericQuery(string sqlQueryText, int max_query_count, string continuation_token)
+        private async Task<GenericQueryResult> GenericQuery(string sqlQueryText, int max_query_count, string? continuation_token)
         {
             QueryDefinition queryDefinition = new QueryDefinition(sqlQueryText);
             GenericQueryResult return_result = new GenericQueryResult();
